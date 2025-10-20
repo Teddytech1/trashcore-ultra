@@ -51,14 +51,12 @@ Click below to deploy instantly on Heroku 👇
 > ⚠️ After deployment, open the Heroku logs to view your pairing QR or session setup process.
 
 ---
-
-#### ⚫ Deploy on **Panel**
-<p align="center">
-  <a href="https://bothosting.net">
-    <img src="https://img.shields.io/badge/Deploy%20on%20Render-000000?style=for-the-badge&logo=render&logoColor=white" alt="Deploy to Render" />
-  </a>
-</p>
-
+#### 🖥️ Deploy on **Pterodactyl Panel**
+If you host bots using **Pterodactyl**, you can easily deploy Trashcore by:
+1. Creating a new **Node.js Egg** (Node v18 or higher recommended)
+2. Setting your **Startup Command** to:
+   ```bash
+   npm install && npm start
 ---
 
 ### 🧩 Configuration Variables
