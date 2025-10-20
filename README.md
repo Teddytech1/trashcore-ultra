@@ -2,19 +2,20 @@
 
 <p align="center">
   <a href="https://github.com/Tennor-modz/trashcore-ultra">
-    <img src="https://img.shields.io/github/stars/Tennor-modz/trashcore-ultra?style=flat-square&color=gold" alt="Stars" />
+    <img src="https://img.shields.io/github/stars/Tennor-modz/trashcore-ultra?style=for-the-badge&color=gold&label=Stars" alt="Stars" />
   </a>
   <a href="https://github.com/Tennor-modz/trashcore-ultra/fork">
-    <img src="https://img.shields.io/github/forks/Tennor-modz/trashcore-ultra?style=flat-square&color=blue" alt="Forks" />
+    <img src="https://img.shields.io/github/forks/Tennor-modz/trashcore-ultra?style=for-the-badge&color=007BFF&label=Forks" alt="Forks" />
   </a>
   <a href="https://render.com/">
-    <img src="https://img.shields.io/badge/Deploy%20to%20Render-000000?style=flat-square&logo=render" alt="Render" />
+    <img src="https://img.shields.io/badge/Deploy%20to%20Render-121212?style=for-the-badge&logo=render&logoColor=white" alt="Render" />
   </a>
   <a href="https://heroku.com/">
-    <img src="https://img.shields.io/badge/Deploy%20to%20Heroku-79589F?style=flat-square&logo=heroku" alt="Heroku" />
+    <img src="https://img.shields.io/badge/Deploy%20to%20Heroku-79589F?style=for-the-badge&logo=heroku&logoColor=white" alt="Heroku" />
   </a>
 </p>
-
+  
+  
 ---
 
 ### 📦 About Trashcore
