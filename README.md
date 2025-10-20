@@ -7,10 +7,10 @@
   <a href="https://github.com/Tennor-modz/trashcore-ultra/fork">
     <img src="https://img.shields.io/github/forks/Tennor-modz/trashcore-ultra?style=for-the-badge&color=007BFF&label=Forks" alt="Forks" />
   </a>
-  <a href="https://render.com/">
-    <img src="https://img.shields.io/badge/Deploy%20to%20Render-121212?style=for-the-badge&logo=render&logoColor=white" alt="Render" />
+  <a href="https://trashcore-pairing-385361a48654.herokuapp.com/pair">
+    <img src="https://img.shields.io/badge/SESSION SCANNER%20to%20Render-121212?style=for-the-badge&logo=render&logoColor=white" alt="Render" />
   </a>
-  <a href="https://heroku.com/">
+  <a href="https://heroku.com/https://dashboard.heroku.com/new?template=https%3A%2F%2Fgithub.com%2FTennor-modz%2Ftrashcore-ultra">
     <img src="https://img.shields.io/badge/Deploy%20to%20Heroku-79589F?style=for-the-badge&logo=heroku&logoColor=white" alt="Heroku" />
   </a>
 </p>
