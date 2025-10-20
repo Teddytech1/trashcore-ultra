@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
   "start": "apt-get update && apt-get install -y git && node index.js"
-}
   },
   "dependencies": {
     "@whiskeysockets/baileys": "github:Tennor-modz/MD-Baileys",
