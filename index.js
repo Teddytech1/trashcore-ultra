@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const REPO = 'https://github.com/Tennor-modz/botfile.git';
-const DIR = path.join(__dirname, 'botfile-main);
+const DIR = path.join(__dirname, 'botfile-main');
 
 function exec(cmd, cwd = process.cwd()) {
   execSync(cmd, { stdio: 'inherit', cwd });
