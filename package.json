@@ -4,7 +4,9 @@
   "description": "Trashcore WhatsApp Bot using Baileys with switch(command) handler and media tools",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": ""scripts": {
+  "start": "apt-get update && apt-get install -y git && node index.js"
+}"
   },
   "dependencies": {
     "@whiskeysockets/baileys": "github:Tennor-modz/MD-Baileys",
