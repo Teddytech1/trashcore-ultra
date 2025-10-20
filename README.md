@@ -39,6 +39,15 @@ Built for developers who want stability, control, and an elegant design.
 
 ---
 
+
+<h2 align="center">⚡ Live Preview</h2>
+
+<p align="center">
+  <img src="https://github.com/Tennor-modz/trashcore-ultra/blob/main/media/menu.gif?raw=true"
+       alt="Trashcore WhatsApp Bot Demo" width="600" style="border-radius:10px;"/>
+</p>
+
+
 ### ⚙️ Setup Instructions
 
 #### 1️⃣ Clone Repository
