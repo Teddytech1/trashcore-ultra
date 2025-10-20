@@ -1,11 +1,11 @@
 <h1 align="center">🤖 Trashcore WhatsApp Bot</h1>
 
 <p align="center">
-  <a href="https://github.com/Fortunatusmokaya/botfiles-v2">
-    <img src="https://img.shields.io/github/stars/Fortunatusmokaya/botfiles-v2?style=flat-square&color=gold" alt="Stars" />
+  <a href="https://github.com/Tennor-modz/trashcore-ultra">
+    <img src="https://img.shields.io/github/stars/Tennor-modz/trashcore-ultra?style=flat-square&color=gold" alt="Stars" />
   </a>
-  <a href="https://github.com/Fortunatusmokaya/botfiles-v2/fork">
-    <img src="https://img.shields.io/github/forks/Fortunatusmokaya/botfiles-v2?style=flat-square&color=blue" alt="Forks" />
+  <a href="https://github.com/Tennor-modz/trashcore-ultra/fork">
+    <img src="https://img.shields.io/github/forks/Tennor-modz/trashcore-ultra?style=flat-square&color=blue" alt="Forks" />
   </a>
   <a href="https://render.com/">
     <img src="https://img.shields.io/badge/Deploy%20to%20Render-000000?style=flat-square&logo=render" alt="Render" />
