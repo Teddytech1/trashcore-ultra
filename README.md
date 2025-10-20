@@ -13,9 +13,6 @@
   <a href="https://dashboard.heroku.com/new?template=https://github.com/Tennor-modz/trashcore-ultra">
     <img src="https://img.shields.io/badge/Deploy%20to%20Heroku-79589F?style=for-the-badge&logo=heroku&logoColor=white" alt="Deploy to Heroku" />
   </a>
-  <a href="https://render.com/deploy?repo=https://github.com/Tennor-modz/trashcore-ultra">
-    <img src="https://img.shields.io/badge/Deploy%20to%20Render-000000?style=for-the-badge&logo=render&logoColor=white" alt="Deploy to Render" />
-  </a>
 </p>
 
 ---
@@ -55,9 +52,9 @@ Click below to deploy instantly on Heroku 👇
 
 ---
 
-#### ⚫ Deploy on **Render**
+#### ⚫ Deploy on **Panel**
 <p align="center">
-  <a href="https://render.com/deploy?repo=https://github.com/Tennor-modz/trashcore-ultra">
+  <a href="https://bothosting.net">
     <img src="https://img.shields.io/badge/Deploy%20on%20Render-000000?style=for-the-badge&logo=render&logoColor=white" alt="Deploy to Render" />
   </a>
 </p>
