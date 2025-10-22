@@ -8,6 +8,17 @@
     <img src="https://img.shields.io/github/forks/Tennor-modz/trashcore-ultra?style=for-the-badge&color=007BFF&label=Forks" alt="Forks" />
   </a>
   
+
+
+<a href='https://www.trashcore-ultra.zone.id' target="_blank">
+  <img alt='Deploy' src='https://img.shields.io/badge/deploy%20bot%20now-darkpink?style=for-the-badge&logo=opencv&logoColor=black'/>
+</a>
+<br> 
+
+
+
+
+
   
 ---
 
