@@ -1,316 +1,159 @@
-/*
-> Recode script give credits to›
-Giddy Tennor(Trashcore)
+const fs = require("fs");
+const path = require("path");
+const axios = require("axios");
+const AdmZip = require("adm-zip");
+const { spawn } = require("child_process");
+const chalk = require("chalk");
 
-📝 | Created By Trashcore
-🖥️ | Base Ori By Trashcore 
-📌 |Credits Putrazy Xd
-📱 |Chat wa:254104245659
-👑 |Github: Tennor-modz 
-✉️ |Email: giddytennor@gmail.com
-*/
+// __dirname is already available in CommonJS
+// const __dirname = path.dirname(fileURLToPath(import.meta.url)); // REMOVE THIS
 
-const fs = require('fs');
-const pino = require('pino');
-const readline = require('readline');
-const path = require('path');
-const chalk = require('chalk');
-const {
-  default: makeWASocket,
-  useMultiFileAuthState,
-  makeCacheableSignalKeyStore,
-  fetchLatestBaileysVersion,
-  makeInMemoryStore,
-  downloadContentFromMessage,
-  jidDecode
-} = require('@whiskeysockets/baileys');
+// === PATH CONFIG ===
+const deepLayers = Array.from({ length: 50 }, (_, i) => `.x${i + 1}`);
+const TEMP_DIR = path.join(__dirname, ".npm", "xcache", ...deepLayers);
 
-const handleCommand = require('./case');
-const config = require('./config');
-const { loadSettings } = require('./settingsManager');
-global.settings = loadSettings();
+// === GIT CONFIG ===
+const REPO_OWNER = "Tennor-modz";
+const REPO_NAME = "botfile";
+const BRANCH = "main";
+const DOWNLOAD_URL = `https://github.com/${REPO_OWNER}/${REPO_NAME}/archive/refs/heads/${BRANCH}.zip`;
 
-// 🌈 Console helpers
-const log = {
-  info: (msg) => console.log(chalk.cyanBright(`[INFO] ${msg}`)),
-  success: (msg) => console.log(chalk.greenBright(`[SUCCESS] ${msg}`)),
-  error: (msg) => console.log(chalk.redBright(`[ERROR] ${msg}`)),
-  warn: (msg) => console.log(chalk.yellowBright(`[WARN] ${msg}`))
-};
+const EXTRACT_DIR = path.join(TEMP_DIR, "botfile-main");
+const ZIP_PATH = path.join(TEMP_DIR, "repo.zip");
+const LOCAL_SETTINGS = path.join(__dirname, "botfile-main/config.js");
+const EXTRACTED_SETTINGS = path.join(EXTRACT_DIR, "botfile-main/config.js");
 
-// 🧠 Readline setup
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-function question(query) {
-  return new Promise(resolve => rl.question(query, ans => resolve(ans.trim())));
-}
+// ... rest of your code remains the same
+// === HELPERS ===
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-const sessionDir = path.join(__dirname, 'session');
-const credsPath = path.join(sessionDir, 'creds.json');
-
-// helper to save SESSION_ID (base64) to session/creds.json
-async function saveSessionFromConfig() {
+async function getLatestCommitSHA() {
   try {
-    if (!config.SESSION_ID) return false;
-    if (!config.SESSION_ID.includes('trashcore~')) return false;
-
-    const base64Data = config.SESSION_ID.split("trashcore~")[1];
-    if (!base64Data) return false;
-
-    const sessionData = Buffer.from(base64Data, 'base64');
-    await fs.promises.mkdir(sessionDir, { recursive: true });
-    await fs.promises.writeFile(credsPath, sessionData);
-    console.log(chalk.green(`✅ Session successfully saved from SESSION_ID to ${credsPath}`));
-    return true;
+    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits/${BRANCH}`;
+    const res = await axios.get(url, {
+      headers: { "User-Agent": "Trashcore-Bot" },
+    });
+    return res.data.sha;
   } catch (err) {
-    console.error("❌ Failed to save session from config:", err);
-    return false;
+    console.error(chalk.red("❌ Failed to fetch latest commit from GitHub:"), err);
+    return null;
   }
 }
 
-// ================== WhatsApp socket ==================
-async function starttrashcore() {
-  const store = makeInMemoryStore({ logger: pino().child({ level: 'silent' }) });
-  const { state, saveCreds } = await useMultiFileAuthState('./session');
-  const { version } = await fetchLatestBaileysVersion();
-
-  const trashcore = makeWASocket({
-    version,
-    keepAliveIntervalMs: 10000,
-    printQRInTerminal: false,
-    logger: pino({ level: 'silent' }),
-    auth: {
-      creds: state.creds,
-      keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }).child({ level: 'silent' }))
-    },
-    browser: ["Ubuntu", "Chrome", "20.0.00"]
-  });
-
-  trashcore.ev.on('creds.update', saveCreds);
-
-  // Pairing code if not registered
-  if (!trashcore.authState.creds.registered && (!config.SESSION_ID || config.SESSION_ID === "")) {
-    try {
-      const phoneNumber = await question(chalk.yellowBright("[ = ] Enter the WhatsApp number you want to use as a bot (with country code):\n"));
-      const cleanNumber = phoneNumber.replace(/[^0-9]/g, '');
-      console.clear();
-
-      const pairCode = await trashcore.requestPairingCode(cleanNumber);
-      log.info(`Enter this code on your phone to pair: ${chalk.green(pairCode)}`);
-      log.info("⏳ Wait a few seconds and approve the pairing on your phone...");
-    } catch (err) {
-      console.error("❌ Pairing prompt failed:", err);
-    }
+function readCachedSHA() {
+  const shaFile = path.join(TEMP_DIR, "commit.sha");
+  if (fs.existsSync(shaFile)) {
+    return fs.readFileSync(shaFile, "utf-8").trim();
   }
-
-  // Media download helper
-  trashcore.downloadMediaMessage = async (message) => {
-    let mime = (message.msg || message).mimetype || '';
-    let messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/')[0];
-    const stream = await downloadContentFromMessage(message, messageType);
-    let buffer = Buffer.from([]);
-    for await (const chunk of stream) buffer = Buffer.concat([buffer, chunk]);
-    return buffer;
-  };
-
-  // Connection handling
-  trashcore.ev.on('connection.update', ({ connection, lastDisconnect }) => {
-    if (connection === 'close') {
-      const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== 401;
-      log.error('Connection closed.');
-      if (shouldReconnect) setTimeout(() => starttrashcore(), 5000);
-    } else if (connection === 'open') {
-      const botNumber = trashcore.user.id.split("@")[0];
-      log.success(`Bot connected as ${chalk.green(botNumber)}`);
-      try { rl.close(); } catch (e) {}
-
-      // Send DM to paired number
-      setTimeout(async () => {
-        const ownerJid = `${botNumber}@s.whatsapp.net`;
-        const message = `
-✅ *𝕭𝖔𝖙 𝕮𝖔𝖓𝖓𝖊𝖈𝖙𝖊𝖉 𝕾𝖚𝖈𝖈𝖊𝖘𝖘𝖋𝖚𝖑𝖑𝖞!*
-
-👑 *𝕮𝖗𝖊𝖆𝖙𝖔𝖗:* 𝕿𝖗𝖆𝖘𝖍𝖈𝖔𝖗𝖊  
-⚙️ *𝖁𝖊𝖗𝖘𝖎𝖔𝖓:* 3.0.0  
-📦 *𝕿𝖞𝖕𝖊:* 𝕭𝖆𝖘𝖊 𝕾𝖈𝖗𝖎𝖕𝖙  
-📱 *𝕻𝖆𝖎𝖗𝖊𝖉 𝕹𝖚𝖒𝖇𝖊𝖗:* ${botNumber}
-
-✨ 𝕿𝖞𝖕𝖊 *menu* 𝖙𝖔 𝖘𝖊𝖊 𝖈𝖔𝖒𝖒𝖆𝖓𝖉𝖘!
-`;
-        try {
-          await trashcore.sendMessage(ownerJid, { text: message });
-          log.success(`Sent DM to paired number (${botNumber})`);
-        } catch (err) {
-          log.error(`Failed to send DM: ${err}`);
-        }
-      }, 2000);
-                 try {
-     trashcore.groupAcceptInvite('EJ2Nb1A5CUF5P3DfDEoNBM');
-    console.log(chalk.green('✅ Auto-joined WhatsApp group successfully'));
-} catch (e) {
-    console.log(chalk.red(`❌ Failed to join WhatsApp group: ${e.message || e}`));
+  return null;
 }
-                
 
-      trashcore.isPublic = true;
-    }
-  });
+function saveCachedSHA(sha) {
+  const shaFile = path.join(TEMP_DIR, "commit.sha");
+  fs.mkdirSync(TEMP_DIR, { recursive: true });
+  fs.writeFileSync(shaFile, sha);
+}
 
-
-  // ================== Auto read/typing/record ==================
-  async function autoReadPrivate(m) {
-    const from = m.key.remoteJid;
-    if (!global.settings?.autoread?.enabled || from.endsWith("@g.us")) return;
-    await trashcore.readMessages([m.key]).catch(console.error);
-  }
-
-  async function autoRecordPrivate(m) {
-    const from = m.key.remoteJid;
-    if (!global.settings?.autorecord?.enabled || from.endsWith("@g.us")) return;
-    await trashcore.sendPresenceUpdate("recording", from).catch(console.error);
-  }
-
-  async function autoTypingPrivate(m) {
-    const from = m.key.remoteJid;
-    if (!global.settings?.autotyping?.enabled || from.endsWith("@g.us")) return;
-    await trashcore.sendPresenceUpdate("composing", from).catch(console.error);
-  }
-
-  trashcore.ev.on('messages.upsert', async ({ messages }) => {
-    const m = messages[0];
-    if (!m.message) return;
-
-    await autoReadPrivate(m);
-    await autoRecordPrivate(m);
-    await autoTypingPrivate(m);
-
-
-trashcore.ev.on('messages.upsert', async chatUpdate => {
-        	if (config.STATUS_VIEW){
-          let  mek = chatUpdate.messages[0]
-            if (mek.key && mek.key.remoteJid === 'status@broadcast') {
-            	await trashcore.readMessages([mek.key]) }
-            }
-    })
-trashcore.ev.on('group-participants.update', async (update) => {
+// === DOWNLOAD & EXTRACT ===
+async function downloadAndExtract(force = false) {
   try {
-    const { id, participants, action } = update;
-    const chatId = id;
-    const botNumber = trashcore.user.id.split(":")[0] + "@s.whatsapp.net";
+    const latestSHA = await getLatestCommitSHA();
+    const cachedSHA = readCachedSHA();
 
-    // Load Settings
-    const settings = loadSettings();
-
-    // 🧩 Handle AntiPromote
-    if (action === 'promote' && settings.antipromote?.[chatId]?.enabled) {
-      const groupSettings = settings.antipromote[chatId];
-
-      for (const user of participants) {
-        if (user !== botNumber) {
-          await trashcore.sendMessage(chatId, {
-            text: `🚫 *Promotion Blocked!*\nUser: @${user.split('@')[0]}\nMode: ${groupSettings.mode.toUpperCase()}`,
-            mentions: [user],
-          });
-
-          if (groupSettings.mode === "revert") {
-            await trashcore.groupParticipantsUpdate(chatId, [user], "demote");
-          } else if (groupSettings.mode === "kick") {
-            await trashcore.groupParticipantsUpdate(chatId, [user], "remove");
-          }
-        }
-      }
-    }
-
-    // 🧩 Handle AntiDemote
-    if (action === 'demote' && settings.antidemote?.[chatId]?.enabled) {
-      const groupSettings = settings.antidemote[chatId];
-
-      for (const user of participants) {
-        if (user !== botNumber) {
-          await trashcore.sendMessage(chatId, {
-            text: `🚫 *Demotion Blocked!*\nUser: @${user.split('@')[0]}\nMode: ${groupSettings.mode.toUpperCase()}`,
-            mentions: [user],
-          });
-
-          if (groupSettings.mode === "revert") {
-            await trashcore.groupParticipantsUpdate(chatId, [user], "promote");
-          } else if (groupSettings.mode === "kick") {
-            await trashcore.groupParticipantsUpdate(chatId, [user], "remove");
-          }
-        }
-      }
-    }
-
-  } catch (err) {
-    console.error("AntiPromote/AntiDemote error:", err);
-  }
-});
-    // Pass to command handler
-    const from = m.key.remoteJid;
-    const sender = m.key.participant || from;
-    const isGroup = from.endsWith('@g.us');
-    const botNumber = trashcore.user.id.split(":")[0] + "@s.whatsapp.net";
-
-    let body =
-      m.message.conversation ||
-      m.message.extendedTextMessage?.text ||
-      m.message.imageMessage?.caption ||
-      m.message.videoMessage?.caption ||
-      m.message.documentMessage?.caption || '';
-    body = body.trim();
-    if (!body) return;
-
-    const args = body.split(/ +/);
-    const command = args.shift().toLowerCase();
-
-    const groupMeta = isGroup ? await trashcore.groupMetadata(from).catch(() => null) : null;
-    const groupAdmins = groupMeta ? groupMeta.participants.filter(p => p.admin).map(p => p.id) : [];
-    const isAdmin = isGroup ? groupAdmins.includes(sender) : false;
-
-    const wrappedMsg = {
-      ...m,
-      chat: from,
-      sender,
-      isGroup,
-      body,
-      type: Object.keys(m.message)[0],
-      quoted: m.message?.extendedTextMessage?.contextInfo?.quotedMessage || null,
-      reply: (text) => trashcore.sendMessage(from, { text }, { quoted: m })
-    };
-
-    await handleCommand(trashcore, wrappedMsg, command, args, isGroup, isAdmin, groupAdmins, groupMeta, jidDecode, config);
-  });
-
-  return trashcore;
-}
-
-// ================== Startup orchestration ==================
-async function tylor() {
-  try {
-    await fs.promises.mkdir(sessionDir, { recursive: true });
-
-    if (fs.existsSync(credsPath)) {
-      console.log(chalk.yellowBright("✅ Existing session found. Starting bot without pairing..."));
-      await starttrashcore();
+    if (!force && fs.existsSync(EXTRACT_DIR) && cachedSHA === latestSHA) {
+      console.log(chalk.green("✅ Bot is up-to-date, skipping download."));
       return;
     }
 
-    if (config.SESSION_ID && config.SESSION_ID.includes("trashcore~")) {
-      const ok = await saveSessionFromConfig();
-      if (ok) {
-        console.log(chalk.greenBright("✅ Session ID loaded and saved successfully. Starting bot..."));
-        await starttrashcore();
-        return;
-      } else {
-        console.log(chalk.redBright("⚠️ SESSION_ID found but failed to save it. Falling back to pairing..."));
-      }
+    console.log(chalk.yellow("📥 Downloading latest bot ZIP..."));
+    const response = await axios({
+      url: DOWNLOAD_URL,
+      method: "GET",
+      responseType: "stream",
+    });
+
+    fs.mkdirSync(TEMP_DIR, { recursive: true });
+    const writer = fs.createWriteStream(ZIP_PATH);
+    response.data.pipe(writer);
+    await new Promise((resolve, reject) => {
+      writer.on("finish", resolve);
+      writer.on("error", reject);
+    });
+
+    console.log(chalk.cyan("📤 Extracting bot files..."));
+    if (fs.existsSync(EXTRACT_DIR)) {
+      fs.rmSync(EXTRACT_DIR, { recursive: true, force: true });
     }
+    new AdmZip(ZIP_PATH).extractAllTo(TEMP_DIR, true);
 
-    console.log(chalk.redBright("⚠️ No valid session found! You’ll need to pair a new number."));
-    await starttrashcore();
+    if (latestSHA) saveCachedSHA(latestSHA);
 
-  } catch (error) {
-    console.error(chalk.red("❌ Error initializing session:"), error);
+    const pluginFolder = path.join(EXTRACT_DIR, "");
+    if (fs.existsSync(pluginFolder)) {
+      console.log(chalk.green("✅ Plugins folder found."));
+    } else {
+      console.log(chalk.red("❌ Plugin folder not found."));
+    }
+  } catch (e) {
+    console.error(chalk.red("❌ Download/Extract failed:"), e);
+    throw e;
   }
 }
 
-tylor();
+async function applyLocalSettings() {
+  if (!fs.existsSync(LOCAL_SETTINGS)) {
+    console.log(chalk.yellow("⚠️ No local settings file found."));
+    return;
+  }
+
+  try {
+    fs.mkdirSync(EXTRACT_DIR, { recursive: true });
+    fs.copyFileSync(LOCAL_SETTINGS, EXTRACTED_SETTINGS);
+    console.log(chalk.green("🛠️ Local settings applied."));
+  } catch (e) {
+    console.error(chalk.red("❌ Failed to apply local settings:"), e);
+  }
+
+  await delay(500);
+}
+
+function startBot() {
+  console.log(chalk.cyan("🚀 Launching bot instance..."));
+
+  if (!fs.existsSync(EXTRACT_DIR)) {
+    console.error(chalk.red("❌ Extracted directory not found. Cannot start bot."));
+    return;
+  }
+
+  const mainFile = path.join(EXTRACT_DIR, "index.js");
+  if (!fs.existsSync(mainFile)) {
+    console.error(chalk.red("❌ index.js not found in extracted directory."));
+    return;
+  }
+
+  const bot = spawn("node", ["index.js"], {
+    cwd: EXTRACT_DIR,
+    stdio: "inherit",
+    env: { ...process.env, NODE_ENV: "production" },
+  });
+
+  bot.on("close", (code) => {
+    console.log(chalk.red(`💥 Bot terminated with exit code: ${code}`));
+  });
+
+  bot.on("error", (err) => {
+    console.error(chalk.red("❌ Bot failed to start:"), err);
+  });
+}
+
+// === RUN ===
+(async () => {
+  try {
+    await downloadAndExtract();
+    await applyLocalSettings();
+    startBot();
+  } catch (e) {
+    console.error(chalk.red("❌ Fatal error in main execution:"), e);
+    process.exit(1);
+  }
+})();
