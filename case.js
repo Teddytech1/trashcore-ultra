@@ -302,7 +302,6 @@ Uptime: ${formatUptime(process.uptime())}
 • >
 • <
 • =>`;
-                const videoPath = './media/menu.mp4';
                 try {
                     await trashcore.sendMessage(from, {
                         video: { url:"https://files.catbox.moe/oda45a.mp4"},
