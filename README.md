@@ -7,14 +7,8 @@
   <a href="https://github.com/Tennor-modz/trashcore-ultra/fork">
     <img src="https://img.shields.io/github/forks/Tennor-modz/trashcore-ultra?style=for-the-badge&color=007BFF&label=Forks" alt="Forks" />
   </a>
-  <a href="https://trashcore-pairing-385361a48654.herokuapp.com/pair">
-    <img src="https://img.shields.io/badge/SESSION%20SCANNER-121212?style=for-the-badge&logo=whatsapp&logoColor=25D366" alt="Session Scanner" />
-  </a>
-  <a href="https://dashboard.heroku.com/new?template=https://github.com/Tennor-modz/trashcore-ultra">
-    <img src="https://img.shields.io/badge/Deploy%20to%20Heroku-79589F?style=for-the-badge&logo=heroku&logoColor=white" alt="Deploy to Heroku" />
-  </a>
-</p>
-
+  
+  
 ---
 
 ### 📦 About Trashcore
@@ -36,27 +30,7 @@ Perfect for developers and enthusiasts who want a **stable, powerful, and custom
 | 💾 Session | Pairing & persistent session support |
 | ☁️ Deploy Ready | Supports Heroku & Panel hosting |
 
----
-
-### ⚙️ Deployment
-
-#### 🟣 Deploy on **Heroku**
-Click below to deploy instantly on Heroku 👇  
-<p align="center">
-  <a href="https://dashboard.heroku.com/new?template=https://github.com/Tennor-modz/trashcore-ultra">
-    <img src="https://img.shields.io/badge/Deploy%20Now%20on%20Heroku-79589F?style=for-the-badge&logo=heroku&logoColor=white" alt="Deploy to Heroku" />
-  </a>
-</p>
-
-> ⚠️ After deployment, open the Heroku logs to view your pairing QR or session setup process.
-
----
-#### 🖥️ Deploy on **Pterodactyl Panel**
-If you host bots using **Pterodactyl**, you can easily deploy Trashcore by:
-1. Creating a new **Node.js Egg** (Node v18 or higher recommended)
-2. Setting your **Startup Command** to:
-   ```bash
-   npm install && npm start
+--
 ---
 
 ### 🧩 Configuration Variables
