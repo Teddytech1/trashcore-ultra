@@ -16,6 +16,7 @@
     "api-dylux": "^1.8.5",
     "btch-downloader": "^4.0.15",
     "node-fetch": "^2.6.7",
+    "node-webpmux": "^3.1.1",
     "mime-types": "^2.1.35",
     "fluent-ffmpeg": "^2.1.2",
     "qrcode-terminal": "^0.12.0",
