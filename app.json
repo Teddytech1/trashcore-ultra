@@ -1,25 +1,14 @@
 {
-    "name": "Trash-Core",
-    "description": "A whatsApp bot based on Baileysjs linrary (Ts+Js) with Multi Device support",
-    "repository": "https://github.com/Tennor-modz/trashcore-ultra",
-    "logo": "https://telegra.ph/file/7aa528767ed96ddc17bc2.jpg",
-    "keywords": ["nodejs", "bot", "whatsapp bot", "whatsapp automation", "multi device"],
-    "env": {
+  "name": "Trashcore-MD",
+  "description": "WhatsApp Multi-Device Bot",
+  "repository": "https://github.com/Tennor-modz/trashcore-ultra",
+  "logo": "https://trashuploads.zone.id/002b27.jpeg",
+  "keywords": ["whatsapp", "bot", "ultra-md", "baileys"],
+  "env": {
     "SESSION_ID": {
-      "description": "put your session ID here. Must begin with trashcore",
-      "value": "trashcore~",
+      "description": "Your WhatsApp session ID",
+        "value": "trashcore~",
       "required": true
     }
-    },
-    "buildpacks": [
-      {
-        "url": "heroku/nodejs"
-    },
-    {
-      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
-    },
-    {
-      "url": "https://github.com/clhuang/heroku-buildpack-webp-binaries.git"
-          }
-     ]
-} 
+  }
+}
