@@ -11,7 +11,7 @@
     "npm": "10.x"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "github:Tennor-modz/MD-Baileys",
+    "@trashcore/baileys": "latest",
     "pino": "^8.0.0",
     "axios": "^0.27.2",
     "adm-zip": "^0.5.16",
