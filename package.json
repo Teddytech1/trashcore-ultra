@@ -27,6 +27,7 @@
     "fs-extra": "^11.1.1",
     "webp-converter": "latest",
     "jimp": "latest",
-    "js-confuser": "^1.7.3"
+    "js-confuser": "^1.7.3",
+    "wa-sticker-formatter":"^4.4.4"
   }
 }
